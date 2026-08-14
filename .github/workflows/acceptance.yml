@@ -1,0 +1,106 @@
+name: Acceptance Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Public StayBridge URL reachable from the GitHub Actions runner
+        required: true
+        type: string
+      evidence_mode:
+        description: Run mobile/admin evidence journeys and upload the full evidence bundle
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: acceptance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  functional:
+    name: Functional acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+
+    steps:
+      - name: Check out acceptance repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Run functional acceptance tests
+        run: npm test
+
+      - name: Upload functional report and failure artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staybridge-functional-${{ github.sha }}
+          path: |
+            evidence/reports/html/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  evidence:
+    name: Evidence acceptance
+    needs: functional
+    if: ${{ always() && inputs.evidence_mode }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+
+    steps:
+      - name: Check out acceptance repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run evidence journeys
+        run: npm run test:evidence
+
+      - name: Generate evidence matrix
+        if: always()
+        run: npm run evidence:matrix
+
+      - name: Upload evidence bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staybridge-acceptance-evidence-${{ github.sha }}
+          path: |
+            evidence/
+            playwright-report/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 30
