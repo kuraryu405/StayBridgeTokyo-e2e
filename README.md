@@ -63,16 +63,16 @@ Current execution and evidence status is tracked in [docs/evidence-matrix.md](do
 Functional mode is optimized for fast deterministic checks. It does not inject the evidence overlay, and retains screenshots, video, and trace on failure.
 
 ```bash
-npm test
+pnpm test
 ```
 
 Useful focused commands:
 
 ```bash
-npm run test:persona
-npm run test:crisis
-npm run test:headed
-npm run test:ui
+pnpm test:persona
+pnpm test:crisis
+pnpm test:headed
+pnpm test:ui
 ```
 
 ## Evidence Mode
@@ -80,8 +80,8 @@ npm run test:ui
 Evidence mode runs the tagged review journeys in mobile and admin-sized Chromium projects. It enables the operation overlay, human-readable pauses, screenshots, video on successful and failed runs, trace, metadata, and an HTML report.
 
 ```bash
-npm run test:evidence
-npm run evidence:matrix
+pnpm test:evidence
+pnpm evidence:matrix
 ```
 
 Evidence mode is deliberately slower only at important review points. It does not replace deterministic assertions with visual or AI judgment.
@@ -124,7 +124,7 @@ Screenshots may include the overlay so the displayed criterion and verification 
 Evidence projects record trace on every run. Functional mode retains trace on failure. Open a downloaded trace with:
 
 ```bash
-npx playwright show-trace path/to/trace.zip
+pnpm exec playwright show-trace path/to/trace.zip
 ```
 
 ## BASE_URL
@@ -132,9 +132,9 @@ npx playwright show-trace path/to/trace.zip
 The target is selected at runtime and defaults locally to `http://localhost:3000`:
 
 ```bash
-BASE_URL=http://localhost:3000 npm test
-BASE_URL=http://localhost:3000 npm run test:evidence
-BASE_URL=https://your-deployment.example npm run test:evidence
+BASE_URL=http://localhost:3000 pnpm test
+BASE_URL=http://localhost:3000 pnpm test:evidence
+BASE_URL=https://your-deployment.example pnpm test:evidence
 ```
 
 The suite checks reachability and should report a clear error when the target is unavailable. `TARGET_COMMIT`, when supplied by a deployment pipeline, may be written to evidence metadata; it is optional.
@@ -147,10 +147,10 @@ The suite checks reachability and should report a clear error when the target is
 4. Type-check, then run functional or evidence mode against the public URL.
 
 ```bash
-npm install
-npx playwright install chromium
-npm run typecheck
-BASE_URL=http://localhost:3000 npm test
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium
+pnpm typecheck
+BASE_URL=http://localhost:3000 pnpm test
 ```
 
 Routes, wording, and accessible names must be inspected from the running UI before selectors are changed. The suite does not invent missing pages or force a requirement to pass.
@@ -169,7 +169,7 @@ The functional job installs dependencies and Chromium, runs type-checking and fu
 Open the local Playwright report with:
 
 ```bash
-npm run report
+pnpm report
 ```
 
 Evidence metadata records scenario, step, acceptance criteria, target URL, browser, viewport, result, and timestamp. The generated evidence matrix links criteria to the available artifacts. Failure evidence includes screenshot, trace, video, and the assertion error where Playwright can capture them. For AC-30, the test grants clipboard permission for the configured target origin, activates the copy control, reads `navigator.clipboard.readText()`, and compares copied content with visible summary facts.
