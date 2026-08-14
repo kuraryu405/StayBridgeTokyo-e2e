@@ -1,0 +1,15 @@
+node_modules/
+.env
+.DS_Store
+test-results/
+playwright-report/
+blob-report/
+
+# Generated evidence. Directory placeholders remain tracked.
+evidence/**/*.png
+evidence/**/*.webm
+evidence/**/*.zip
+evidence/**/*.json
+evidence/reports/html/
+evidence/reports/*.xml
+evidence/reports/*.json
