@@ -2,6 +2,7 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { Page, TestInfo } from "@playwright/test";
 import { EVIDENCE_ROOT, safeSegment, writeMetadata } from "./metadata";
+import { MUNICIPALITY_URL, TARGET_COMMIT, TARGET_URLS, USER_URL } from "../targets";
 import type { EvidenceCapture, EvidenceStepRecord } from "./types";
 
 export interface CaptureContext {
@@ -29,7 +30,10 @@ export async function captureEvidence(
     step: name,
     acceptanceCriteria: input.acceptance ?? context.currentStep?.acceptance ?? [],
     targetUrl: page.url(),
-    targetCommit: process.env.TARGET_COMMIT || undefined,
+    userUrl: USER_URL,
+    municipalityUrl: MUNICIPALITY_URL,
+    targetUrls: TARGET_URLS,
+    targetCommit: TARGET_COMMIT,
     browser: browserName,
     project: testInfo.project.name,
     viewport: viewport ? `${viewport.width}x${viewport.height}` : "unknown",

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { demoRoadmap, goHelp, roadmapCard } from "../fixtures/staybridge";
+import { USER_URL } from "../helpers/targets";
 
 test("AC-08–16 Persona A roadmap is prioritized, explained, and source-backed", async ({ page }) => {
   await demoRoadmap(page);
@@ -54,7 +55,7 @@ test("AC-24–27, AC-29–30 Human Handoff and the fact-only consultation summar
   await expect(sheet).toContainText("帰国することが難しい");
   await expect(sheet).not.toContainText(/政治|迫害|難民/);
 
-  await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: "http://localhost:3000" });
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: new URL(USER_URL).origin });
   await page.getByRole("button", { name: "コピーする" }).click();
   await expect(page.getByRole("button", { name: /コピーしました/ })).toBeVisible();
 });

@@ -1,15 +1,18 @@
 import { expect, type Locator, type Page } from "@playwright/test";
+import { MUNICIPALITY_URL, USER_URL } from "../helpers/targets";
 
-export const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+export { MUNICIPALITY_URL, USER_URL };
+/** Backwards-compatible alias for callers that only need the user target. */
+export const BASE_URL = USER_URL;
 
 export async function openHome(page: Page) {
-  await page.goto(BASE_URL);
+  await page.goto(USER_URL);
   await page.waitForLoadState("networkidle");
   await expect(page.getByRole("button", { name: "今の状況を確認する" })).toBeVisible();
 }
 
 export async function openCrisis(page: Page) {
-  await page.goto(`${BASE_URL}/crisis`);
+  await page.goto(MUNICIPALITY_URL);
   await expect(page.getByRole("heading", { name: /支援準備のために、\s*次に確認すること。/ })).toBeVisible();
 }
 

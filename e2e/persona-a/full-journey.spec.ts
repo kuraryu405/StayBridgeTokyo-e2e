@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { createEvidence } from "../../helpers/evidence";
 import { openHome, roadmapCard } from "../../fixtures/staybridge";
+import { USER_URL } from "../../helpers/targets";
 
 test("Persona A full journey @evidence", async ({ page, context }, testInfo) => {
   const evidence = createEvidence(page, testInfo);
   try {
-    await evidence.navigate("/", { step: 1, total: 11, action: "START", detail: "Persona AとしてStayBridgeを開始", verify: "Landingが表示される" });
+    await evidence.navigate(USER_URL, { step: 1, total: 11, action: "START", detail: "Persona AとしてStayBridgeを開始", verify: "Landingが表示される" });
     // Wait for the app's public startup/hydration work before changing UI state.
     await page.waitForLoadState("networkidle");
     await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: new URL(page.url()).origin });

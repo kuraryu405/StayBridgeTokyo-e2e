@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
+import { MUNICIPALITY_URL, USER_URL } from "./helpers/targets";
 
-const baseURL = process.env.BASE_URL ?? "http://localhost:3000";
 const isCI = Boolean(process.env.CI);
 
 export default defineConfig({
@@ -24,7 +24,7 @@ export default defineConfig({
     ["./helpers/evidence/reporter.ts"],
   ],
   use: {
-    baseURL,
+    baseURL: USER_URL,
     actionTimeout: 10_000,
     navigationTimeout: 20_000,
     locale: "ja-JP",
@@ -38,6 +38,7 @@ export default defineConfig({
       grepInvert: /@evidence/,
       use: {
         ...devices["Desktop Chrome"],
+        baseURL: USER_URL,
         trace: "retain-on-failure",
         screenshot: "only-on-failure",
         video: "retain-on-failure",
@@ -49,6 +50,7 @@ export default defineConfig({
       grep: /@evidence/,
       use: {
         ...devices["iPhone 13"],
+        baseURL: USER_URL,
         browserName: "chromium",
         viewport: { width: 390, height: 844 },
         trace: "on",
@@ -62,6 +64,7 @@ export default defineConfig({
       grep: /@evidence/,
       use: {
         ...devices["Desktop Chrome"],
+        baseURL: MUNICIPALITY_URL,
         viewport: { width: 1440, height: 900 },
         trace: "on",
         screenshot: "only-on-failure",

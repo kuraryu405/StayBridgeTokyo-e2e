@@ -127,22 +127,25 @@ Evidence projects record trace on every run. Functional mode retains trace on fa
 pnpm exec playwright show-trace path/to/trace.zip
 ```
 
-## BASE_URL
+## Target URLs and local configuration
 
-The target is selected at runtime and defaults locally to `http://localhost:3000`:
+The personal/user deployment and municipality/preparedness deployment are selected independently at runtime. Local defaults are:
+
+- `BASE_URL`: user app, `http://localhost:3000`
+- `MUNICIPALITY_URL`: municipality app root, `http://localhost:3001`
 
 ```bash
-BASE_URL=http://localhost:3000 pnpm test
-BASE_URL=http://localhost:3000 pnpm test:evidence
-BASE_URL=https://your-deployment.example pnpm test:evidence
+BASE_URL=http://localhost:3000 MUNICIPALITY_URL=http://localhost:3001 pnpm test
+BASE_URL=http://localhost:3000 MUNICIPALITY_URL=http://localhost:3001 pnpm test:evidence
+BASE_URL=https://user.example MUNICIPALITY_URL=https://municipality.example pnpm test:evidence
 ```
 
-The suite checks reachability and should report a clear error when the target is unavailable. `TARGET_COMMIT`, when supplied by a deployment pipeline, may be written to evidence metadata; it is optional.
+Personal journeys always open `BASE_URL`. Crisis and municipality journeys always open the municipality root at `MUNICIPALITY_URL`; they do not append `/crisis` to the user deployment. The suite checks both configured deployments and reports a clear error when either is unavailable. `TARGET_COMMIT` identifies the exact application SHA in evidence metadata and is required by the CI workflow.
 
 ## Local Setup
 
 1. Start the StayBridge Tokyo application independently. Do not add it as a package dependency and do not copy or import its source into this repository.
-2. Confirm its public URL in a browser. The default expected local URL is `http://localhost:3000`.
+2. Start the user app at `http://localhost:3000` and the municipality app at `http://localhost:3001`, or set `BASE_URL` and `MUNICIPALITY_URL` to their public roots.
 3. Install this repository and Playwright Chromium.
 4. Type-check, then run functional or evidence mode against the public URL.
 
@@ -150,19 +153,37 @@ The suite checks reachability and should report a clear error when the target is
 pnpm install --frozen-lockfile
 pnpm exec playwright install chromium
 pnpm typecheck
-BASE_URL=http://localhost:3000 pnpm test
+BASE_URL=http://localhost:3000 MUNICIPALITY_URL=http://localhost:3001 pnpm test
 ```
 
 Routes, wording, and accessible names must be inspected from the running UI before selectors are changed. The suite does not invent missing pages or force a requirement to pass.
 
-## CI
+## CI dispatch
 
-The `Acceptance Tests` workflow is manually dispatched with:
+The `Acceptance Tests` workflow supports both manual dispatch and the `application-updated` repository-dispatch event. Manual runs provide:
 
-- `base_url`: a StayBridge deployment reachable from the GitHub-hosted runner
+- `user_url`: user deployment URL reachable from the GitHub-hosted runner
+- `municipality_url`: municipality deployment root URL reachable from the GitHub-hosted runner
 - `evidence_mode`: whether to run the evidence projects after the functional job completes
+- `target_commit`: the exact 40-character application commit SHA under test
 
-The functional job installs dependencies and Chromium, runs type-checking and functional tests, and uploads its HTML report/test results. When requested, the evidence job runs even if the functional job failed, so diagnostic video/trace evidence is still preserved while the functional failure remains visible in the workflow result. It runs the evidence tests and matrix generator, then uploads screenshots, videos, traces, metadata, reports, and test results as `staybridge-acceptance-evidence-<commit SHA>`.
+The application repository can trigger the same workflow with this payload:
+
+```json
+{
+  "event_type": "application-updated",
+  "client_payload": {
+    "user_url": "https://user.example",
+    "municipality_url": "https://municipality.example",
+    "application_ref": "0123456789abcdef0123456789abcdef01234567",
+    "evidence_mode": true
+  }
+}
+```
+
+The workflow maps `user_url` to `BASE_URL`, `municipality_url` to `MUNICIPALITY_URL`, and the manual `target_commit` or dispatch `application_ref` to `TARGET_COMMIT`. The preparation job rejects missing targets, non-HTTP(S) URLs, non-boolean evidence mode, and non-exact application SHAs. See [docs/dispatch.md](docs/dispatch.md) for the contract.
+
+The functional job installs dependencies and Chromium, runs type-checking and functional tests, and uploads its HTML report/test results. When requested, the evidence job runs even if the functional job failed, so diagnostic video/trace evidence is still preserved while the functional failure remains visible in the workflow result. It runs the evidence tests and matrix generator, then uploads screenshots, videos, traces, metadata, reports, and test results as `staybridge-acceptance-evidence-<target application SHA>`.
 
 ## Reports
 
@@ -172,7 +193,7 @@ Open the local Playwright report with:
 pnpm report
 ```
 
-Evidence metadata records scenario, step, acceptance criteria, target URL, browser, viewport, result, and timestamp. The generated evidence matrix links criteria to the available artifacts. Failure evidence includes screenshot, trace, video, and the assertion error where Playwright can capture them. For AC-30, the test grants clipboard permission for the configured target origin, activates the copy control, reads `navigator.clipboard.readText()`, and compares copied content with visible summary facts.
+Evidence metadata records scenario, step, acceptance criteria, the page target URL, both configured deployment URLs, target commit, browser, viewport, result, and timestamp. The generated run manifest also records the user and municipality URLs as a `targetUrls` map. The generated evidence matrix links criteria to the available artifacts. Failure evidence includes screenshot, trace, video, and the assertion error where Playwright can capture them. For AC-30, the test grants clipboard permission for the configured user origin, activates the copy control, reads `navigator.clipboard.readText()`, and compares copied content with visible summary facts.
 
 ## Safety Verification
 

@@ -4,6 +4,7 @@ import { captureEvidence } from "./capture";
 import { markClick } from "./click-marker";
 import { writeMetadata } from "./metadata";
 import { clearOverlay, installOverlay, showOverlay } from "./overlay";
+import { MUNICIPALITY_URL, TARGET_COMMIT, TARGET_URLS, USER_URL } from "../targets";
 import type {
   EvidenceCapture,
   EvidenceResult,
@@ -286,8 +287,11 @@ class EvidenceController implements Evidence {
     await writeMetadata(scenario, `${this.testInfo.testId}-run`, {
       scenario,
       videoName: options.videoName,
-      target: process.env.BASE_URL ?? "http://localhost:3000",
-      targetCommit: process.env.TARGET_COMMIT || undefined,
+      target: this.page.url(),
+      userUrl: USER_URL,
+      municipalityUrl: MUNICIPALITY_URL,
+      targetUrls: TARGET_URLS,
+      targetCommit: TARGET_COMMIT,
       project: this.testInfo.project.name,
       test: this.testInfo.title,
       file: path.relative(process.cwd(), this.testInfo.file),

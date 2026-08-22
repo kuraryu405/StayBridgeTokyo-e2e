@@ -72,7 +72,7 @@ Across the roadmap, education, employment, human-support, and summary views, ass
 
 ## Preparedness / crisis journey
 
-The desktop evidence scenario opens the actual public preparedness route discovered from the running application (currently `/crisis`) and records a separate video:
+The desktop evidence scenario opens the municipality deployment root (`MUNICIPALITY_URL`) and records a separate video. The municipality app owns the preparedness route; the user app is not expected to expose `/crisis`:
 
 1. Open Preparedness View (`AC-31`).
 2. Verify the Myanmar case (`AC-32`).

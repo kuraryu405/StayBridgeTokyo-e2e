@@ -8,7 +8,7 @@ These are issue candidates discovered through the public interface. They are not
 - **Severity:** Major
 - **Status:** Known Gap (publicly observed; strict detail-navigation assertion pending)
 - **Steps:**
-  1. Open the public Preparedness View at `/crisis`.
+  1. Open the public Preparedness View at the municipality deployment root.
   2. Locate the municipality context for Kita City.
   3. Attempt to open or navigate to municipality detail.
 - **Expected:** a user can go to the selected municipality's detail view.
@@ -22,7 +22,7 @@ These are issue candidates discovered through the public interface. They are not
 - **Severity:** Major
 - **Status:** Known Gap (publicly observed; strict four-dimension assertion pending)
 - **Steps:**
-  1. Open `/crisis`.
+  1. Open the municipality deployment root.
   2. Read “今のOpen Dataでは分からないこと”.
   3. Compare the visible gap dimensions with the strict AC-41 dimensions.
 - **Expected:** explicit coverage of short-term visitor visibility, language support, consultation capacity, and real demand.
