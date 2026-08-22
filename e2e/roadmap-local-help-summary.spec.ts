@@ -34,7 +34,7 @@ test("AC-17–23 Local Action shows schools, medical facilities and source/eligi
   await page.getByRole("tab", { name: "医療" }).click();
   const medical = page.locator(".resource-card").filter({ has: page.getByRole("heading", { name: "おうじキッズクリニック" }) });
   await expect(medical).toBeVisible();
-  await expect(medical).toContainText("Confirm services and appointment requirements directly.");
+  await expect(medical).toContainText("診療内容と予約の必要性は直接確認してください。");
   await expect(medical.getByRole("link", { name: /Kita City Public Health Center/ })).toHaveAttribute("href", /^https?:\/\//);
 });
 
