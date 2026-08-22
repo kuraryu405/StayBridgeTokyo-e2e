@@ -27,7 +27,7 @@ for (const target of ["landing", "situation", "roadmap", "local", "crisis"] as c
     if (target === "situation") { await openHome(page); await page.getByRole("button", { name: "今の状況を確認する" }).click(); }
     if (target === "roadmap" || target === "local") {
       await demoRoadmap(page);
-      if (target === "local") await page.getByRole("navigation", { name: "Primary" }).getByRole("button", { name: "近くの支援" }).click();
+      if (target === "local") await page.getByRole("button", { name: "近くの支援", exact: true }).click();
     }
     if (target === "crisis") await openCrisis(page);
     const results = await new AxeBuilder({ page }).analyze();

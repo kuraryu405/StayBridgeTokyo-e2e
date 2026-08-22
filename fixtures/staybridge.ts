@@ -6,8 +6,7 @@ export { MUNICIPALITY_URL, USER_URL };
 export const BASE_URL = USER_URL;
 
 export async function openHome(page: Page) {
-  await page.goto(USER_URL);
-  await page.waitForLoadState("networkidle");
+  await page.goto(USER_URL, { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "今の状況を確認する" })).toBeVisible();
 }
 
@@ -88,6 +87,6 @@ export async function goLocal(page: Page) {
 }
 
 export async function goHelp(page: Page) {
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("button", { name: "相談先" }).click();
+  await page.getByRole("button", { name: "相談先", exact: true }).click();
   await expect(page.getByRole("heading", { name: "人に相談する" })).toBeVisible();
 }

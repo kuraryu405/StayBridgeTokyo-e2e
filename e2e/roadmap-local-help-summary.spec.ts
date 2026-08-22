@@ -41,7 +41,7 @@ test("AC-17–23 Local Action shows schools, medical facilities and source/eligi
 test("AC-24–27, AC-29–30 Human Handoff and the fact-only consultation summary", async ({ page, context }) => {
   await demoRoadmap(page);
   await goHelp(page);
-  await expect(page.getByText("HUMAN HANDOFF", { exact: true })).toBeVisible();
+  await expect(page.getByText("人への相談", { exact: true })).toBeVisible();
   await expect(page.getByText("最終的な判断はしません")).toBeVisible();
   const fresc = page.getByRole("heading", { name: "Foreign Residents Support Center (FRESC) contacts" });
   await expect(fresc).toBeVisible();
