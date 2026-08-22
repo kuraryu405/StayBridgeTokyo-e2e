@@ -16,7 +16,9 @@ Personal journeys use `BASE_URL`. Crisis and municipality journeys use `MUNICIPA
 
 ## Manual dispatch
 
-The GitHub Actions form takes `user_url`, `municipality_url`, `evidence_mode`, and `target_commit`. The target commit must be the full application SHA, not the acceptance repository SHA, a branch name, or a short SHA.
+The current GitHub Actions form takes `user_url`, `municipality_url`, `evidence_mode`, and `target_commit`. The target commit must be the full application SHA, not the acceptance repository SHA, a branch name, or a short SHA.
+
+The previous `base_url` input remains accepted for manual runs. It maps to `user_url` and to the legacy `/crisis` municipality path. If the old form omits `target_commit`, the receiver run SHA is used only as a compatibility label; new runs should always pass the application SHA.
 
 ## Repository dispatch
 
@@ -35,3 +37,5 @@ The application repository sends:
 ```
 
 The receiver maps `client_payload.user_url` to `BASE_URL`, `client_payload.municipality_url` to `MUNICIPALITY_URL`, `client_payload.application_ref` to `TARGET_COMMIT`, and `client_payload.evidence_mode` to the evidence-job switch. A preparation job validates all four values before any browser job starts. The evidence job remains diagnostic and runs after functional failure when evidence mode is enabled.
+
+The previous payload shape (`url` and `ref`, without `evidence_mode`) remains accepted. It maps `url` to the user deployment, `${url}/crisis` to the legacy municipality route, `ref` to `TARGET_COMMIT`, and defaults evidence mode to `false`.

@@ -21,13 +21,15 @@ on:
     inputs:
       user_url:
         description: Public user deployment URL reachable from the GitHub Actions runner
-        required: true
-        default: http://localhost:3000
+        required: false
         type: string
       municipality_url:
         description: Public municipality deployment root URL reachable from the GitHub Actions runner
-        required: true
-        default: http://localhost:3001
+        required: false
+        type: string
+      base_url:
+        description: Legacy single-application URL; use user_url and municipality_url for split deployments
+        required: false
         type: string
       evidence_mode:
         description: Run mobile/admin evidence journeys and upload the full evidence bundle
@@ -65,26 +67,39 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           INPUT_USER_URL: ${{ inputs.user_url }}
           INPUT_MUNICIPALITY_URL: ${{ inputs.municipality_url }}
+          INPUT_BASE_URL: ${{ inputs.base_url }}
           INPUT_EVIDENCE_MODE: ${{ inputs.evidence_mode }}
           INPUT_TARGET_COMMIT: ${{ inputs.target_commit }}
           PAYLOAD_USER_URL: ${{ github.event.client_payload.user_url }}
           PAYLOAD_MUNICIPALITY_URL: ${{ github.event.client_payload.municipality_url }}
           PAYLOAD_EVIDENCE_MODE: ${{ github.event.client_payload.evidence_mode }}
           PAYLOAD_APPLICATION_REF: ${{ github.event.client_payload.application_ref }}
+          PAYLOAD_TARGET_COMMIT: ${{ github.event.client_payload.target_commit }}
+          PAYLOAD_URL: ${{ github.event.client_payload.url }}
+          PAYLOAD_REF: ${{ github.event.client_payload.ref }}
+          GITHUB_RUN_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
 
           if [[ "$EVENT_NAME" == "repository_dispatch" ]]; then
-            user_url="$PAYLOAD_USER_URL"
+            user_url="${PAYLOAD_USER_URL:-$PAYLOAD_URL}"
             municipality_url="$PAYLOAD_MUNICIPALITY_URL"
-            evidence_mode="${PAYLOAD_EVIDENCE_MODE,,}"
-            target_commit="$PAYLOAD_APPLICATION_REF"
+            if [[ -z "$municipality_url" && -n "$PAYLOAD_URL" ]]; then
+              municipality_url="${PAYLOAD_URL%/}/crisis"
+            fi
+            evidence_mode="${PAYLOAD_EVIDENCE_MODE:-false}"
+            target_commit="${PAYLOAD_APPLICATION_REF:-${PAYLOAD_TARGET_COMMIT:-$PAYLOAD_REF}}"
           else
-            user_url="$INPUT_USER_URL"
+            user_url="${INPUT_USER_URL:-$INPUT_BASE_URL}"
             municipality_url="$INPUT_MUNICIPALITY_URL"
-            evidence_mode="${INPUT_EVIDENCE_MODE,,}"
-            target_commit="$INPUT_TARGET_COMMIT"
+            if [[ -z "$municipality_url" && -n "$INPUT_BASE_URL" ]]; then
+              municipality_url="${INPUT_BASE_URL%/}/crisis"
+            fi
+            evidence_mode="${INPUT_EVIDENCE_MODE:-false}"
+            target_commit="${INPUT_TARGET_COMMIT:-$GITHUB_RUN_SHA}"
           fi
+
+          evidence_mode="${evidence_mode,,}"
 
           [[ -n "$user_url" ]] || { echo "user_url is required" >&2; exit 1; }
           [[ -n "$municipality_url" ]] || { echo "municipality_url is required" >&2; exit 1; }
