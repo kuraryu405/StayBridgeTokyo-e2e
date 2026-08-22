@@ -1,4 +1,5 @@
 name: Acceptance Tests
+run-name: Acceptance ${{ github.event.client_payload.application_ref || inputs.target_commit || github.sha }}
 
 on:
   workflow_dispatch:
