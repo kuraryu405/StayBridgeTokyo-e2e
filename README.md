@@ -107,11 +107,11 @@ Important clicks also receive a short-lived element outline and click marker. Th
 The mobile Persona A journey and desktop preparedness journey are recorded separately. Expected friendly artifact names are:
 
 ```text
-evidence/videos/persona-a.webm
-evidence/videos/crisis-preparedness.webm
+evidence/videos/persona-a.mp4
+evidence/videos/crisis-preparedness.mp4
 ```
 
-Per-test archival copies may also appear below `evidence/videos/persona-a/` and `evidence/videos/crisis/`. Actual output is generated only after a run. Video is normally stored as a CI artifact rather than committed to Git. The overlay makes the silent video understandable without narration.
+Playwright records Chromium video as WebM internally; the evidence reporter converts it to H.264 MP4 with FFmpeg after each test. Install FFmpeg locally with `brew install ffmpeg` (or set `FFMPEG_PATH`); the GitHub Actions evidence job installs it automatically. Per-test archival copies may also appear below `evidence/videos/persona-a/` and `evidence/videos/crisis/`. Actual output is generated only after a run. Video is normally stored as a CI artifact rather than committed to Git. The overlay makes the silent video understandable without narration.
 
 ## Screenshots
 

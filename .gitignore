@@ -8,6 +8,7 @@ blob-report/
 # Generated evidence. Directory placeholders remain tracked.
 evidence/**/*.png
 evidence/**/*.webm
+evidence/**/*.mp4
 evidence/**/*.zip
 evidence/**/*.json
 evidence/reports/html/

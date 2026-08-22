@@ -111,9 +111,9 @@ function scenarioFor(id: string): string {
 }
 
 function videoFor(scenario: string): string | undefined {
-  if (scenario === "persona-a") return path.join("evidence", "videos", "persona-a.webm");
+  if (scenario === "persona-a") return path.join("evidence", "videos", "persona-a.mp4");
   if (scenario === "crisis") {
-    return path.join("evidence", "videos", "crisis-preparedness.webm");
+    return path.join("evidence", "videos", "crisis-preparedness.mp4");
   }
   return undefined;
 }
@@ -259,7 +259,7 @@ async function main(): Promise<void> {
   const lines = [
     "# Evidence Matrix",
     "",
-    "Generated from the latest scenario run only. A metadata `PASS` is published only when the final Playwright run passed and the referenced screenshot exists. Video links are emitted only for files that exist.",
+    "Generated from the latest scenario run only. A metadata `PASS` is published only when the final Playwright run passed and the referenced screenshot exists. Video links are emitted only for files that exist. Evidence videos are H.264 MP4 artifacts converted from Playwright's internal WebM recording.",
     "",
     "`AC-35` and strict `AC-41` remain explicit Known Gaps until the public UI meets those requirements.",
     "",

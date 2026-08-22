@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   FullConfig,
@@ -9,6 +9,7 @@ import type {
   TestResult,
 } from "@playwright/test/reporter";
 import { EVIDENCE_ROOT, safeSegment } from "./metadata";
+import { convertVideoToMp4 } from "./video";
 
 interface ResultRecord {
   id: string;
@@ -72,7 +73,7 @@ export default class EvidenceReporter implements Reporter {
 
       let destination: string | undefined;
       if (attachment.name === "video" && isEvidence) {
-        destination = path.join(EVIDENCE_ROOT, "videos", scenario, `${slug}.webm`);
+        destination = path.join(EVIDENCE_ROOT, "videos", scenario, `${slug}.mp4`);
       } else if (attachment.name === "trace" && isEvidence) {
         destination = path.join(EVIDENCE_ROOT, "traces", scenario, `${slug}.zip`);
       } else if (
@@ -89,15 +90,25 @@ export default class EvidenceReporter implements Reporter {
 
       if (!destination || !attachment.path) continue;
       await mkdir(path.dirname(destination), { recursive: true });
-      await copyFile(attachment.path, destination);
+      if (attachment.name === "video" && isEvidence) {
+        const temporaryDestination = `${destination}.tmp`;
+        try {
+          await convertVideoToMp4(attachment.path, temporaryDestination);
+          await rename(temporaryDestination, destination);
+        } finally {
+          await rm(temporaryDestination, { force: true });
+        }
+      } else {
+        await copyFile(attachment.path, destination);
+      }
       artifacts.push(path.relative(this.rootDir, destination));
 
       // Stable presentation aliases required by the evidence contract.
       if (attachment.name === "video" && isEvidence && /full[- ]journey/i.test(test.title)) {
-        const aliasName = scenario === "crisis" ? "crisis-preparedness.webm" : `${scenario}.webm`;
+        const aliasName = scenario === "crisis" ? "crisis-preparedness.mp4" : `${scenario}.mp4`;
         const alias = path.join(EVIDENCE_ROOT, "videos", aliasName);
         await mkdir(path.dirname(alias), { recursive: true });
-        await copyFile(attachment.path, alias);
+        await copyFile(destination, alias);
         artifacts.push(path.relative(this.rootDir, alias));
       }
     }
