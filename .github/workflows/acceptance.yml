@@ -2,6 +2,21 @@ name: Acceptance Tests
 run-name: Acceptance ${{ github.event.client_payload.application_ref || inputs.target_commit || github.sha }}
 
 on:
+  workflow_call:
+    inputs:
+      user_url:
+        required: true
+        type: string
+      municipality_url:
+        required: true
+        type: string
+      evidence_mode:
+        required: false
+        default: false
+        type: boolean
+      target_commit:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       user_url:
@@ -104,6 +119,9 @@ jobs:
     steps:
       - name: Check out acceptance repository
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event_name == 'workflow_call' && 'kuraryu405/StayBridgeTokyo-e2e' || github.repository }}
+          ref: ${{ github.event_name == 'workflow_call' && 'main' || github.ref }}
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -154,6 +172,9 @@ jobs:
     steps:
       - name: Check out acceptance repository
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event_name == 'workflow_call' && 'kuraryu405/StayBridgeTokyo-e2e' || github.repository }}
+          ref: ${{ github.event_name == 'workflow_call' && 'main' || github.ref }}
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
