@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { createEvidence } from "../../helpers/evidence";
+import { MUNICIPALITY_URL } from "../../helpers/targets";
 
 test("Crisis Preparedness full journey @evidence", async ({ page }, testInfo) => {
   const evidence = createEvidence(page, testInfo);
   try {
-    await evidence.navigate("/crisis", { step: 1, total: 8, action: "START", detail: "Preparedness Viewを開く", acceptance: ["AC-31"], verify: "行政向け画面が表示される" });
+    await evidence.navigate(MUNICIPALITY_URL, { step: 1, total: 8, action: "START", detail: "Preparedness Viewを開く", acceptance: ["AC-31"], verify: "行政向け画面が表示される" });
     await expect(page.getByText("Preparedness View", { exact: true })).toBeVisible();
     await evidence.pass("Preparedness Viewを確認");
 

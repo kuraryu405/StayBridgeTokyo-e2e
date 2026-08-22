@@ -7,7 +7,7 @@ This log records barriers to black-box verification. It does not authorize chang
 ### TG-01 — Municipality detail has no observable transition
 
 - **Related criterion:** AC-35
-- **Observed public behavior:** `/crisis` shows a Kita City section and its resources in the same page, but initial inspection found no control or route that opens a distinct municipality detail.
+- **Observed public behavior:** the municipality deployment root shows a Kita City section and its resources in the same page, but initial inspection found no control or route that opens a distinct municipality detail.
 - **Test impact:** a strict browser test cannot demonstrate the required “go to municipality detail” interaction. Presence of the words “Kita City” is insufficient and must not be used to force a pass.
 - **Current handling:** report `Known Gap`. The current evidence flow captures the inline Kita section but does not implement the strict detail-navigation assertion; its AC-35 annotation must not be interpreted as `PASS`.
 - **Possible target-side improvement:** expose a visible municipality choice/detail control or clarify that the inline section is the accepted detail behavior.

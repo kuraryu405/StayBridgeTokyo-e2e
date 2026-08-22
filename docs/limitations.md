@@ -46,4 +46,4 @@ Each stream should retain its method, reviewer, target/version, timestamp, and r
 
 ## Review cadence
 
-Evidence is a snapshot. Re-run after target deployments, route/content changes, source-data refreshes, or external-link changes. Record `BASE_URL`, timestamp, and `TARGET_COMMIT` when available so reviewers can distinguish product change from test change.
+Evidence is a snapshot. Re-run after target deployments, route/content changes, source-data refreshes, or external-link changes. Record `BASE_URL`, `MUNICIPALITY_URL`, timestamp, and `TARGET_COMMIT` so reviewers can distinguish product change from test change. The evidence run manifest records both deployment URLs and the page URL used by each journey.

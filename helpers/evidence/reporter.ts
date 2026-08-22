@@ -9,6 +9,7 @@ import type {
   TestResult,
 } from "@playwright/test/reporter";
 import { EVIDENCE_ROOT, safeSegment } from "./metadata";
+import { MUNICIPALITY_URL, TARGET_COMMIT, TARGET_URLS, USER_URL } from "../targets";
 
 interface ResultRecord {
   id: string;
@@ -175,8 +176,11 @@ export default class EvidenceReporter implements Reporter {
       { passed: 0, failed: 0, skipped: 0, timedOut: 0, interrupted: 0 },
     );
     const manifest = {
-      target: process.env.BASE_URL ?? "http://localhost:3000",
-      targetCommit: process.env.TARGET_COMMIT || undefined,
+      target: USER_URL,
+      userUrl: USER_URL,
+      municipalityUrl: MUNICIPALITY_URL,
+      targetUrls: TARGET_URLS,
+      targetCommit: TARGET_COMMIT,
       startedAt: this.startedAt,
       finishedAt: new Date().toISOString(),
       status: result.status,

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { openHome } from "../fixtures/staybridge";
+import { MUNICIPALITY_URL } from "../helpers/targets";
 
 test("AC-01/02 landing is visible and Situation Check starts", async ({ page }) => {
   await openHome(page);
@@ -11,6 +12,6 @@ test("AC-01/02 landing is visible and Situation Check starts", async ({ page }) 
 test("landing links to the public Preparedness View", async ({ page }) => {
   await openHome(page);
   await page.getByRole("link", { name: /Preparedness View/ }).click();
-  await expect(page).toHaveURL(/\/crisis$/);
+  await expect(page).toHaveURL(new URL(MUNICIPALITY_URL).toString());
   await expect(page.getByText("Preparedness View", { exact: true })).toBeVisible();
 });

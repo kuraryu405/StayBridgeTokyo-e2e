@@ -25,7 +25,7 @@ The browser is the only test interface to StayBridge Tokyo. This repository neve
 | Evidence mobile | Persona review evidence at 390 × 844 | On | Named checkpoints and failure | On | On |
 | Evidence admin | Preparedness evidence at 1440 × 900 | On | Named checkpoints and failure | On | On |
 
-Each test receives an isolated browser context. No scenario may rely on storage or state left by another test.
+Each test receives an isolated browser context. No scenario may rely on storage or state left by another test. Personal scenarios use the user deployment (`BASE_URL`); crisis and municipality scenarios use the municipality deployment root (`MUNICIPALITY_URL`).
 
 ## Evidence synchronization
 
@@ -84,8 +84,8 @@ evidence/
 └── reports/
 ```
 
-Metadata binds an artifact to scenario, step, AC IDs, target URL, browser, viewport, result, and timestamp. A target commit may be included when `TARGET_COMMIT` is provided. Large videos and traces are intended for CI artifacts; representative screenshots and Markdown may be versioned deliberately.
+Metadata binds an artifact to scenario, step, AC IDs, page target URL, configured user and municipality URLs, browser, viewport, result, timestamp, and `TARGET_COMMIT`. The run manifest exposes the configured URLs again as a `targetUrls` map. Large videos and traces are intended for CI artifacts; representative screenshots and Markdown may be versioned deliberately.
 
 ## Failure and reachability
 
-Before scenarios begin, the suite checks the configured `BASE_URL`. An unreachable target produces an actionable error identifying the URL and instructing the operator to start or deploy StayBridge. Assertion failure retains screenshot, video, trace, error text, and available metadata, then fails the test normally.
+Before scenarios begin, the suite checks both configured deployment roots. An unreachable target produces an actionable error identifying the URL and instructing the operator to start or deploy StayBridge. Assertion failure retains screenshot, video, trace, error text, and available metadata, then fails the test normally.
