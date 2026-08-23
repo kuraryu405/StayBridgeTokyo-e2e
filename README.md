@@ -75,6 +75,10 @@ pnpm test:headed
 pnpm test:ui
 ```
 
+The focused staging coverage for Issues #60 and #62 is documented in
+[docs/staging-issues-60-62.md](docs/staging-issues-60-62.md). It needs the
+synthetic anonymous-aggregate fixture deployed by the application workflow.
+
 ## Evidence Mode
 
 Evidence mode runs the tagged review journeys in mobile and admin-sized Chromium projects. It enables the operation overlay, human-readable pauses, screenshots, video on successful and failed runs, trace, metadata, and an HTML report.
