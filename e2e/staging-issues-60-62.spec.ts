@@ -2,9 +2,9 @@ import { expect, test, type Page } from "@playwright/test";
 import { MUNICIPALITY_URL, USER_URL } from "../helpers/targets";
 
 const localeCopy = {
-  ja: { demo: "デモの状況を読み込む", roadmap: "次のステップを見る", assistant: "確認済み情報アシスタント", ask: "質問する", decline: "同意しない", local: "地域情報を開く", help: "人的相談を開く" },
-  en: { demo: "Load demo situation", roadmap: "See my next steps", assistant: "Verified information assistant", ask: "Ask", decline: "Decline", local: "Open local support", help: "Open human support" },
-  my: { demo: "ဒေမို", roadmap: "နောက်", assistant: "အတည်ပြုအချက်အလက်", ask: "မေးရန်", decline: "မသဘောတူ", local: "ဒေသ", help: "တိုင်ပင်" },
+  ja: { demo: "デモの状況を読み込む", roadmap: "次のステップを見る", assistant: "確認済み情報アシスタント", ask: "質問する", decline: "保存しない", local: "地域情報を開く", help: "人的相談を開く" },
+  en: { demo: "Load demo situation", roadmap: "See my next steps", assistant: "Verified information assistant", ask: "Ask", decline: "Do not save", local: "Open local support", help: "Open human support" },
+  my: { demo: "ဒေမို", roadmap: "နောက်", assistant: "အတည်ပြုအချက်အလက်", ask: "မေးရန်", decline: "မသိမ်းရန်", local: "ဒေသ", help: "တိုင်ပင်" },
 } as const;
 
 async function openDemoRoadmap(page: Page, locale: keyof typeof localeCopy = "ja") {
@@ -41,7 +41,7 @@ test.describe("Issue #60: Crisis View voluntary needs", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(MUNICIPALITY_URL, { waitUntil: "domcontentloaded" });
     await expect(page.getByTestId("crisis-needs-error")).toBeVisible();
-    await expect(page.getByTestId("crisis-needs-error")).toContainText(/個別の情報は表示しない|individual/i);
+    await expect(page.getByTestId("crisis-needs-error")).toContainText(/個別の情報は表示せず|individual/i);
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 });
@@ -75,6 +75,7 @@ test.describe("Issue #62: verified assistant", () => {
     for (const locale of ["ja", "en", "my"] as const) {
       await openDemoRoadmap(page, locale);
       const assistant = page.locator(".verified-assistant");
+      await assistant.getByRole("textbox").fill("support information");
       await expect(assistant.getByRole("button", { name: new RegExp(localeCopy[locale].ask) })).toBeEnabled();
       await expect(assistant.getByRole("textbox")).toBeVisible();
       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
