@@ -4,7 +4,7 @@ import { MUNICIPALITY_URL, USER_URL } from "../helpers/targets";
 const localeCopy = {
   ja: { demo: "デモの状況を読み込む", roadmap: "次のステップを見る", assistant: "確認済み情報アシスタント", ask: "質問する", decline: "保存しない", local: "地域情報を開く", help: "人的相談を開く" },
   en: { demo: "Load demo situation", roadmap: "See my next steps", assistant: "Verified information assistant", ask: "Ask", decline: "Do not save", local: "Open local support", help: "Open human support" },
-  my: { demo: "ဒေမို", roadmap: "နောက်", assistant: "အတည်ပြုအချက်အလက်", ask: "မေးရန်", decline: "မသိမ်းရန်", local: "ဒေသ", help: "တိုင်ပင်" },
+  my: { demo: "နမူနာအခြေအနေ ဖွင့်ရန်", roadmap: "နောက်အဆင့်များ ကြည့်ရန်", assistant: "အတည်ပြုအချက်အလက်", ask: "မေးရန်", decline: "မသိမ်းရန်", local: "ဒေသ", help: "တိုင်ပင်" },
 } as const;
 
 async function openDemoRoadmap(page: Page, locale: keyof typeof localeCopy = "ja") {
