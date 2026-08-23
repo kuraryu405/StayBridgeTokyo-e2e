@@ -135,8 +135,10 @@ jobs:
       - name: Check out acceptance repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event_name == 'workflow_call' && 'kuraryu405/StayBridgeTokyo-e2e' || github.repository }}
-          ref: ${{ github.event_name == 'workflow_call' && 'main' || github.ref }}
+          repository: kuraryu405/StayBridgeTokyo-e2e
+          # A called workflow keeps the caller's event name and ref. Use this
+          # repository's main branch for calls, while preserving direct branch runs.
+          ref: ${{ github.repository == 'kuraryu405/StayBridgeTokyo-e2e' && github.ref || 'main' }}
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -188,8 +190,9 @@ jobs:
       - name: Check out acceptance repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event_name == 'workflow_call' && 'kuraryu405/StayBridgeTokyo-e2e' || github.repository }}
-          ref: ${{ github.event_name == 'workflow_call' && 'main' || github.ref }}
+          repository: kuraryu405/StayBridgeTokyo-e2e
+          # Keep evidence execution on the same acceptance source as functional.
+          ref: ${{ github.repository == 'kuraryu405/StayBridgeTokyo-e2e' && github.ref || 'main' }}
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
