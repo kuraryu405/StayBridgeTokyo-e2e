@@ -4,6 +4,21 @@ import { MUNICIPALITY_URL, USER_URL } from "../helpers/targets";
 export { MUNICIPALITY_URL, USER_URL };
 /** Backwards-compatible alias for callers that only need the user target. */
 export const BASE_URL = USER_URL;
+export const firstQuestionHeading = "東京のどの地域に滞在していますか？";
+export const wardSearchLabel = "東京23区から選択";
+const nationalitySearchLabel = "国名・地域名から選択";
+const myanmarOption = "ミャンマー (ビルマ)";
+const questionHeadings = {
+  nationality: "国籍・地域を教えてください。",
+  purpose: "日本にはどのような予定で来ましたか？",
+  departure: "日本をいつ出る予定でしたか？",
+  returnStatus: "予定どおり帰国できますか？",
+  stayKnowledge: "日本にいつまで滞在できるか分かりますか？",
+  family: "一緒に日本にいる家族はいますか？",
+  accommodation: "どこに滞在していますか？",
+  needs: "現在困っていることは何ですか？",
+  japanese: "日本語をどのくらい話せますか？",
+};
 
 export async function openHome(page: Page) {
   await page.goto(USER_URL, { waitUntil: "domcontentloaded" });
@@ -30,34 +45,34 @@ export async function demoRoadmap(page: Page) {
 
 async function chooseRadio(page: Page, name: string) {
   const radio = page.getByRole("radio", { name });
-  await radio.locator("xpath=ancestor::label[1]").click();
+  await radio.locator("xpath=ancestor::label[1]").getByText(name, { exact: true }).click();
   await expect(radio).toBeChecked();
 }
 
 async function chooseCheckbox(page: Page, name: string) {
   const checkbox = page.getByRole("checkbox", { name });
-  await checkbox.locator("xpath=ancestor::label[1]").click();
+  await checkbox.locator("xpath=ancestor::label[1]").getByText(name, { exact: true }).click();
   await expect(checkbox).toBeChecked();
 }
 
 async function chooseSearchOption(page: Page, label: string, name: string) {
   const combobox = page.getByRole("combobox", { name: label });
-  await combobox.fill(name);
+  await combobox.click();
+  await combobox.fill(name.slice(0, -1));
+  await page.getByRole("listbox", { name: label }).getByRole("option", { name, exact: true }).click();
+  await expect(combobox).toHaveValue(name);
+}
+
+async function advanceToQuestion(page: Page, heading: string) {
   const next = page.getByRole("button", { name: "次へ" });
-  if (!(await next.isEnabled())) {
-    await page.getByRole("option", { name, exact: false }).click();
-  }
   await expect(next).toBeEnabled();
+  await next.click();
+  await expect(page.getByRole("heading", { name: heading })).toBeVisible();
 }
 
-async function selectOption(page: Page, name: string) {
+async function selectOption(page: Page, name: string, nextHeading: string) {
   await chooseRadio(page, name);
-  await page.getByRole("button", { name: "次へ" }).click();
-}
-
-async function selectSearchOption(page: Page, label: string, name: string) {
-  await chooseSearchOption(page, label, name);
-  await page.getByRole("button", { name: "次へ" }).click();
+  await advanceToQuestion(page, nextHeading);
 }
 
 /** Completes the public ten-question assessment, without injecting browser state. */
@@ -79,27 +94,31 @@ export async function completeSituation(
 ) {
   await openHome(page);
   await page.getByRole("button", { name: "今の状況を確認する" }).click();
-  await expect(page.getByRole("heading", { name: "東京のどの地域に滞在していますか？" })).toBeVisible();
-  await selectSearchOption(page, "東京23区から選択", choices.municipality || "北区");
-  await selectSearchOption(page, "国名・地域名から選択", choices.nationality || "ミャンマー");
-  await selectOption(page, choices.purpose || "旅行");
-  await selectOption(page, choices.departure || "30日以内");
-  await selectOption(page, choices.returnStatus || "帰国することが難しい");
-  await selectOption(page, choices.stayKnowledge || "分からない");
+  await expect(page.getByRole("heading", { name: firstQuestionHeading })).toBeVisible();
+  await chooseSearchOption(page, wardSearchLabel, choices.municipality || "北区");
+  await advanceToQuestion(page, questionHeadings.nationality);
+  await chooseSearchOption(page, nationalitySearchLabel, choices.nationality || myanmarOption);
+  await advanceToQuestion(page, questionHeadings.purpose);
+  await selectOption(page, choices.purpose || "旅行", questionHeadings.departure);
+  await selectOption(page, choices.departure || "30日以内", questionHeadings.returnStatus);
+  await selectOption(page, choices.returnStatus || "帰国することが難しい", questionHeadings.stayKnowledge);
+  await selectOption(page, choices.stayKnowledge || "分からない", questionHeadings.family);
   // The family screen exposes choice controls as checkboxes in the current UI,
   // whereas the preceding single-choice questions use radios.
   await chooseCheckbox(page, choices.family || "子どもがいる");
   if ((choices.family || "子どもがいる") === "子どもがいる") {
     await chooseCheckbox(page, choices.childAge || "6-11");
   }
-  await page.getByRole("button", { name: "次へ" }).click();
-  await selectOption(page, choices.accommodation || "ホテル・宿泊施設");
+  await advanceToQuestion(page, questionHeadings.accommodation);
+  await selectOption(page, choices.accommodation || "ホテル・宿泊施設", questionHeadings.needs);
   for (const need of choices.needs || ["日本にいつまでいられるか", "相談先"]) {
     await chooseCheckbox(page, need);
   }
-  await page.getByRole("button", { name: "次へ" }).click();
+  await advanceToQuestion(page, questionHeadings.japanese);
   await chooseRadio(page, choices.japanese || "少し話せる");
-  await page.getByRole("button", { name: "状況を整理する" }).click();
+  const finish = page.getByRole("button", { name: "状況を整理する" });
+  await expect(finish).toBeEnabled();
+  await finish.click();
   await expect(page.getByRole("heading", { name: "回答を確認して、次の行動へ進みましょう" })).toBeVisible();
 }
 
