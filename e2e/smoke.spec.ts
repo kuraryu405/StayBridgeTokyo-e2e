@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
-import { firstQuestionHeading, openHome } from "../fixtures/staybridge";
+import { firstQuestionHeading, landingPrimaryCta, openHome } from "../fixtures/staybridge";
 import { MUNICIPALITY_URL } from "../helpers/targets";
 
 test("AC-01/02 landing is visible and Situation Check starts", async ({ page }) => {
   await openHome(page);
   await expect(page.getByRole("heading", { name: /見つけよう。\s*東京での第一歩を。/ })).toBeVisible();
-  await page.getByRole("button", { name: "今の状況を確認する" }).click();
+  await landingPrimaryCta(page).click();
   await expect(page.getByRole("heading", { name: firstQuestionHeading })).toBeVisible();
 });
 

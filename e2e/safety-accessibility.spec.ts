@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { demoRoadmap, firstQuestionHeading, loadDemo, openCrisis, openHome, roadmapCard, wardSearchLabel } from "../fixtures/staybridge";
+import { demoRoadmap, firstQuestionHeading, landingPrimaryCta, loadDemo, openCrisis, openHome, roadmapCard, wardSearchLabel } from "../fixtures/staybridge";
 
 test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nationality-risk claim", async ({ page }) => {
   await openHome(page);
@@ -25,7 +25,7 @@ test("SAFE-07 crisis view does not expose individual tracking or address-level l
 for (const target of ["landing", "situation", "roadmap", "local", "crisis"] as const) {
   test(`a11y ${target}: no serious or critical axe violations`, async ({ page }) => {
     if (target === "landing") await openHome(page);
-    if (target === "situation") { await openHome(page); await page.getByRole("button", { name: "今の状況を確認する" }).click(); }
+    if (target === "situation") { await openHome(page); await landingPrimaryCta(page).click(); }
     if (target === "roadmap" || target === "local") {
       await demoRoadmap(page);
       if (target === "local") await page.getByRole("button", { name: "近くの支援", exact: true }).click();
@@ -38,7 +38,7 @@ for (const target of ["landing", "situation", "roadmap", "local", "crisis"] as c
 
 test("keyboard: landing CTA and Situation Check next button work with Enter", async ({ page }) => {
   await openHome(page);
-  await page.getByRole("button", { name: "今の状況を確認する" }).focus();
+  await landingPrimaryCta(page).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { name: firstQuestionHeading })).toBeVisible();
   await page.getByRole("combobox", { name: wardSearchLabel }).focus();

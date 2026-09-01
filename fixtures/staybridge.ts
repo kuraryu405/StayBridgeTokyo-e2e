@@ -5,6 +5,7 @@ export { MUNICIPALITY_URL, USER_URL };
 /** Backwards-compatible alias for callers that only need the user target. */
 export const BASE_URL = USER_URL;
 export const firstQuestionHeading = "東京のどの地域に滞在していますか？";
+const primaryCtaName = "フォームに回答する";
 export const wardSearchLabel = "東京23区から選択";
 const nationalitySearchLabel = "国名・地域名から選択";
 const myanmarOption = "ミャンマー (ビルマ)";
@@ -22,8 +23,12 @@ const questionHeadings = {
 
 export async function openHome(page: Page) {
   await page.goto(USER_URL, { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("button", { name: "今の状況を確認する" })).toBeVisible();
+  await expect(landingPrimaryCta(page)).toBeVisible();
   await page.waitForLoadState("networkidle");
+}
+
+export function landingPrimaryCta(page: Page) {
+  return page.locator("#top").getByRole("button", { name: primaryCtaName });
 }
 
 export async function openCrisis(page: Page) {
@@ -93,7 +98,7 @@ export async function completeSituation(
   } = {},
 ) {
   await openHome(page);
-  await page.getByRole("button", { name: "今の状況を確認する" }).click();
+  await landingPrimaryCta(page).click();
   await expect(page.getByRole("heading", { name: firstQuestionHeading })).toBeVisible();
   await chooseSearchOption(page, wardSearchLabel, choices.municipality || "北区");
   await advanceToQuestion(page, questionHeadings.nationality);
