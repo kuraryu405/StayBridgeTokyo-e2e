@@ -1,18 +1,18 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { demoRoadmap, openCrisis, openHome, roadmapCard } from "../fixtures/staybridge";
+import { demoRoadmap, loadDemo, openCrisis, openHome, roadmapCard } from "../fixtures/staybridge";
 
 test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nationality-risk claim", async ({ page }) => {
   await openHome(page);
-  await expect(page.getByText(/AI相談は一般情報の案内で、法律・在留資格の最終判断ではありません。/)).toBeVisible();
   await expect(page.locator("main")).not.toContainText("あなたは難民です");
   await expect(page.locator("main")).not.toContainText(/難民認定.*確率/);
   await expect(page.locator("main")).not.toContainText(/ミャンマー.*危険度/);
-  await demoRoadmap(page);
-  const education = await roadmapCard(page, "子どもの教育について相談する");
-  await education.getByRole("button", { name: "近くの学校を見る" }).click();
-  await page.getByRole("tab", { name: "学校・教育" }).click();
-  await expect(page.locator(".resource-card").first()).toContainText("入学・就学については自治体または教育機関への確認が必要です。");
+  await loadDemo(page);
+  await expect(page.getByText(/在留手続や法律上の判断は、専門相談窓口で確認してください/)).toBeVisible();
+  await page.getByRole("button", { name: "次のステップを見る" }).click();
+  const childSupport = await roadmapCard(page, "子どもと利用できる地域資源を確認する");
+  await childSupport.getByRole("button", { name: "子どもの居場所を見る" }).click();
+  await expect(page.locator("main")).not.toContainText("入学できます");
 });
 
 test("SAFE-07 crisis view does not expose individual tracking or address-level location", async ({ page }) => {

@@ -8,5 +8,5 @@ test("AC-03–07 manual Situation Check accepts Persona A facts", async ({ page 
     await expect(review).toContainText(fact);
   }
   await page.getByRole("button", { name: "次のステップを見る" }).click();
-  await expect(await roadmapCard(page, "子どもの教育について相談する")).toBeVisible();
+  await expect(await roadmapCard(page, "子どもと利用できる地域資源を確認する")).toBeVisible();
 });

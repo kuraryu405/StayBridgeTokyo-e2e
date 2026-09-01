@@ -12,7 +12,7 @@ test("AC-31–34, AC-36–40, AC-42–43 Preparedness View presents data, limits
   await expect(page.getByText("平時の居住者分布に加えて、短期滞在者の状況、実際の相談件数、窓口の処理能力を確認します。", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "確認できた地域資源" })).toBeVisible(); // AC-36
   await page.getByText(/収録した施設を見る/).click();
-  await expect(page.getByText("豊川小学校", { exact: true })).toBeVisible();
+  await expect(page.getByText("おうじキッズクリニック", { exact: true })).toBeVisible();
   const coverage = page.locator(".coverage-banner");
   await expect(coverage).toContainText("この数値で確認できる範囲"); // AC-38
   await expect(coverage).toContainText("短期滞在者"); // AC-39

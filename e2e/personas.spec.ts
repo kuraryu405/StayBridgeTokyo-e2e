@@ -18,7 +18,7 @@ test("Persona D: medical need gives a medical local action", async ({ page }) =>
   await page.getByRole("button", { name: "次のステップを見る" }).click();
   const card = await roadmapCard(page, "医療を受けられる場所を確認する");
   await card.getByRole("button", { name: "近くの医療機関を見る" }).click();
-  await page.getByRole("tab", { name: "医療" }).click();
+  await page.getByRole("button", { name: "医療", exact: true }).click();
   await expect(page.getByRole("heading", { name: "おうじキッズクリニック" })).toBeVisible();
 });
 
