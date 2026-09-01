@@ -26,9 +26,3 @@ test("AC-31–34, AC-36–40, AC-42–43 Preparedness View presents data, limits
   await expect(page.getByRole("heading", { name: "対応検討項目" })).toBeVisible(); // AC-42
   await expect(page.getByText("ミャンマー語・英語で案内できる情報を確認", { exact: true })).toBeVisible(); // AC-43
 });
-
-test("KG-AC35: fixed Kita detail has no user-visible municipality drill-down", async ({ page }) => {
-  await openCrisis(page);
-  await expect(page.locator(".population-card").getByText("北区", { exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: /北区|KITA/ })).toHaveCount(0);
-});

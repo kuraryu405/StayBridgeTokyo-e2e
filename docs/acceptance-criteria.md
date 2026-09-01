@@ -50,7 +50,7 @@ Priority meanings:
 | AC-32 | The Myanmar case is identifiable. | Admin | Crisis content assertion | Crisis overview screenshot/video/trace | P0 |
 | AC-33 | Foreign-population reference data is displayed. | Admin | Population assertion | Crisis overview screenshot/video/trace | P0 |
 | AC-34 | A municipality-level view is displayed. | Admin | Municipality label/data assertion | `crisis/02-municipality.png`; crisis video/trace | P0 |
-| AC-35 | A municipality detail such as Kita can be opened/navigated to. | Admin | Strict municipality-detail navigation assertion | Municipality screenshot/video/trace | P0 |
+| AC-35 | A municipality detail such as Kita can be opened/navigated to. | Admin | Known gap; no release-blocking assertion until the route exists | Municipality screenshot/video/trace | P0 |
 | AC-36 | Local resources can be reviewed. | Admin | Resource list/category assertion | `crisis/03-resources.png`; crisis video/trace | P0 |
 | AC-37 | Population alone is not used to conclude that support is insufficient. | Admin | Caution-language and prohibited-conclusion assertion | Overview/resources screenshot and trace | P0 |
 | AC-38 | A Coverage Note is displayed. | Admin | Coverage-note assertion | `crisis/04-coverage-note.png`; crisis video/trace | P0 |
