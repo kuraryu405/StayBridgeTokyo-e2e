@@ -4,7 +4,7 @@ import { demoRoadmap, openCrisis, openHome, roadmapCard } from "../fixtures/stay
 
 test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nationality-risk claim", async ({ page }) => {
   await openHome(page);
-  await expect(page.getByText("在留資格や法律上の判断は行いません")).toBeVisible();
+  await expect(page.getByText(/AI相談は一般情報の案内で、法律・在留資格の最終判断ではありません。/)).toBeVisible();
   await expect(page.locator("main")).not.toContainText("あなたは難民です");
   await expect(page.locator("main")).not.toContainText(/難民認定.*確率/);
   await expect(page.locator("main")).not.toContainText(/ミャンマー.*危険度/);
@@ -17,7 +17,8 @@ test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nat
 
 test("SAFE-07 crisis view does not expose individual tracking or address-level location", async ({ page }) => {
   await openCrisis(page);
-  await expect(page.getByText("個人追跡・住所レベル表示・法的判断を行いません")).toBeVisible();
+  await expect(page.getByText(/会話本文・個票は含まれません/)).toBeVisible();
+  await expect(page.getByText("公開情報と匿名集計を使用", { exact: true })).toBeVisible();
   await expect(page.locator(".crisis-main")).not.toContainText(/緯度|経度|GPS/);
 });
 
