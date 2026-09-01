@@ -18,7 +18,7 @@ export async function openCrisis(page: Page) {
 export async function loadDemo(page: Page) {
   await openHome(page);
   await page.getByRole("button", { name: "デモの状況を読み込む" }).click();
-  await expect(page.getByRole("heading", { name: "今の状況を整理しました" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "回答を確認して、次の行動へ進みましょう" })).toBeVisible();
 }
 
 export async function demoRoadmap(page: Page) {
@@ -27,8 +27,20 @@ export async function demoRoadmap(page: Page) {
   await expect(page.getByRole("heading", { name: "あなたの次のステップ" })).toBeVisible();
 }
 
+async function chooseRadio(page: Page, name: string) {
+  const radio = page.getByRole("radio", { name });
+  await radio.locator("xpath=ancestor::label[1]").click();
+  await expect(radio).toBeChecked();
+}
+
+async function chooseCheckbox(page: Page, name: string) {
+  const checkbox = page.getByRole("checkbox", { name });
+  await checkbox.locator("xpath=ancestor::label[1]").click();
+  await expect(checkbox).toBeChecked();
+}
+
 async function selectOption(page: Page, name: string) {
-  await page.getByRole("radio", { name }).click();
+  await chooseRadio(page, name);
   await page.getByRole("button", { name: "次へ" }).click();
 }
 
@@ -60,19 +72,19 @@ export async function completeSituation(
   await selectOption(page, choices.stayKnowledge || "分からない");
   // The family screen exposes choice controls as checkboxes in the current UI,
   // whereas the preceding single-choice questions use radios.
-  await page.getByRole("checkbox", { name: choices.family || "子どもがいる" }).click();
+  await chooseCheckbox(page, choices.family || "子どもがいる");
   if ((choices.family || "子どもがいる") === "子どもがいる") {
     await page.getByRole("button", { name: choices.childAge || "6-11", exact: true }).click();
   }
   await page.getByRole("button", { name: "次へ" }).click();
   await selectOption(page, choices.accommodation || "ホテル・宿泊施設");
   for (const need of choices.needs || ["日本にいつまでいられるか", "相談先"]) {
-    await page.getByRole("checkbox", { name: need }).click();
+    await chooseCheckbox(page, need);
   }
   await page.getByRole("button", { name: "次へ" }).click();
-  await page.getByRole("radio", { name: choices.japanese || "少し話せる" }).click();
+  await chooseRadio(page, choices.japanese || "少し話せる");
   await page.getByRole("button", { name: "状況を整理する" }).click();
-  await expect(page.getByRole("heading", { name: "今の状況を整理しました" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "回答を確認して、次の行動へ進みましょう" })).toBeVisible();
 }
 
 export async function roadmapCard(page: Page, heading: string): Promise<Locator> {
