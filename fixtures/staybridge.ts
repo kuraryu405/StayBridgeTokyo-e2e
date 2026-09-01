@@ -8,6 +8,7 @@ export const BASE_URL = USER_URL;
 export async function openHome(page: Page) {
   await page.goto(USER_URL, { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "今の状況を確認する" })).toBeVisible();
+  await page.waitForLoadState("networkidle");
 }
 
 export async function openCrisis(page: Page) {
@@ -74,7 +75,7 @@ export async function completeSituation(
   // whereas the preceding single-choice questions use radios.
   await chooseCheckbox(page, choices.family || "子どもがいる");
   if ((choices.family || "子どもがいる") === "子どもがいる") {
-    await page.getByRole("button", { name: choices.childAge || "6-11", exact: true }).click();
+    await chooseCheckbox(page, choices.childAge || "6-11");
   }
   await page.getByRole("button", { name: "次へ" }).click();
   await selectOption(page, choices.accommodation || "ホテル・宿泊施設");

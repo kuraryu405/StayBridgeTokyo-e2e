@@ -1,18 +1,17 @@
 import { expect, test } from "@playwright/test";
-import { openCrisis, openHome } from "../fixtures/staybridge";
+import { openHome } from "../fixtures/staybridge";
+import { MUNICIPALITY_URL } from "../helpers/targets";
 
 test("AC-01/02 landing is visible and Situation Check starts", async ({ page }) => {
   await openHome(page);
-  await expect(page.getByRole("heading", { name: "見つけよう。東京での第一歩を。" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /見つけよう。\s*東京での第一歩を。/ })).toBeVisible();
   await page.getByRole("button", { name: "今の状況を確認する" }).click();
   await expect(page.getByRole("heading", { name: "今、東京のどの地域に滞在していますか？" })).toBeVisible();
 });
 
-test("landing explains how support teams access the public preparedness view", async ({ page }) => {
+test("landing links to the public Preparedness View", async ({ page }) => {
   await openHome(page);
-  await expect(page.getByRole("heading", { name: "行政・支援者向け" })).toBeVisible();
-  await expect(page.getByText("支援チーム: 参考画面は別のURLから確認できます。", { exact: true })).toBeVisible();
-
-  await openCrisis(page);
-  await expect(page.getByRole("heading", { name: /支援準備のために、\s*次に確認すること。/ })).toBeVisible();
+  await page.getByRole("link", { name: /行政・支援者向けの確認画面/ }).click();
+  await expect(page).toHaveURL(new URL(MUNICIPALITY_URL).toString());
+  await expect(page.getByText("自治体・支援者向け確認画面", { exact: true })).toBeVisible();
 });
