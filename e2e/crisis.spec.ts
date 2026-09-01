@@ -8,6 +8,8 @@ test("AC-31–34, AC-36–40, AC-42–43 Preparedness View presents data, limits
   const population = page.locator(".population-card");
   await expect(population.getByText("北区", { exact: true })).toBeVisible(); // AC-34
   await expect(population.getByText("住民基本台帳", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "次に確認する情報" })).toBeVisible(); // AC-37
+  await expect(page.getByText("平時の居住者分布に加えて、短期滞在者の状況、実際の相談件数、窓口の処理能力を確認します。", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "確認できた地域資源" })).toBeVisible(); // AC-36
   await page.getByText(/収録した施設を見る/).click();
   await expect(page.getByText("豊川小学校", { exact: true })).toBeVisible();
