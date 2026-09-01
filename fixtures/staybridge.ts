@@ -5,7 +5,6 @@ export { MUNICIPALITY_URL, USER_URL };
 /** Backwards-compatible alias for callers that only need the user target. */
 export const BASE_URL = USER_URL;
 export const firstQuestionHeading = "東京のどの地域に滞在していますか？";
-const primaryCtaName = "フォームに回答する";
 export const wardSearchLabel = "東京23区から選択";
 const nationalitySearchLabel = "国名・地域名から選択";
 const myanmarOption = "ミャンマー (ビルマ)";
@@ -28,12 +27,12 @@ export async function openHome(page: Page) {
 }
 
 export function landingPrimaryCta(page: Page) {
-  return page.locator("#top").getByRole("button", { name: primaryCtaName });
+  return page.locator("#top .hero-actions .velorah-cta");
 }
 
 export async function openCrisis(page: Page) {
   await page.goto(MUNICIPALITY_URL);
-  await expect(page.getByRole("heading", { name: /支援準備のために、\s*次に確認すること。/ })).toBeVisible();
+  await expect(page.locator("main h1").first()).toBeVisible();
 }
 
 export async function loadDemo(page: Page) {

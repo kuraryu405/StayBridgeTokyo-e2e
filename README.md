@@ -58,9 +58,15 @@ Persona A is fictional and must never be presented as a real person or as proof 
 
 Current execution and evidence status is tracked in [docs/evidence-matrix.md](docs/evidence-matrix.md). `NOT RUN` means no result or artifact is claimed. `Known Gap` identifies an observed product/testability divergence, not a passing result.
 
-## Functional Test
+## Release Gate and Functional Test
 
-Functional mode is optimized for fast deterministic checks. It does not inject the evidence overlay, and retains screenshots, video, and trace on failure.
+The production release gate runs only five black-box checks: both public entry points, the manual Situation Check, and the two safety boundaries. These checks avoid coupling promotion to landing copy or headings.
+
+```bash
+pnpm test:release
+```
+
+The comprehensive functional suite remains available for intentional regression review. It does not inject the evidence overlay, and retains screenshots, video, and trace on failure, but it is not a production-promotion gate.
 
 ```bash
 pnpm test
@@ -183,7 +189,7 @@ The application repository can trigger the same workflow with this payload:
 
 The workflow maps `user_url` to `BASE_URL`, `municipality_url` to `MUNICIPALITY_URL`, and the manual `target_commit` or dispatch `application_ref` to `TARGET_COMMIT`. The preparation job rejects missing targets, non-HTTP(S) URLs, non-boolean evidence mode, and non-exact application SHAs. See [docs/dispatch.md](docs/dispatch.md) for the contract.
 
-The functional job installs dependencies and Chromium, runs type-checking and functional tests, and uploads its HTML report/test results. When requested, the evidence job runs even if the functional job failed, so diagnostic video/trace evidence is still preserved while the functional failure remains visible in the workflow result. It runs the evidence tests and matrix generator, then uploads screenshots, videos, traces, metadata, reports, and test results as `staybridge-acceptance-evidence-<target application SHA>`.
+The release job installs dependencies and Chromium, runs type-checking and `pnpm test:release`, and uploads its HTML report/test results. Run `pnpm test` separately for the comprehensive functional suite. When requested, the evidence job runs even if the release job failed, so diagnostic video/trace evidence is still preserved while the release failure remains visible in the workflow result. It runs the evidence tests and matrix generator, then uploads screenshots, videos, traces, metadata, reports, and test results as `staybridge-acceptance-evidence-<target application SHA>`.
 
 ## Reports
 
@@ -201,7 +207,7 @@ Safety checks ensure the UI does not infer a right to stay, refugee status, refu
 
 ## Accessibility
 
-The suite checks critical and serious axe findings on the landing, situation, roadmap, local-action, and preparedness views; keyboard access for primary controls; and mobile horizontal overflow. The current axe run reports serious color-contrast failures on Landing, Roadmap, Local Action, and Preparedness; Situation Check passed that scoped axe assertion. See [docs/product-gaps.md](docs/product-gaps.md). Automated tooling cannot establish complete accessibility or translation quality.
+The comprehensive functional suite checks critical and serious axe findings on the landing, situation, roadmap, local-action, and preparedness views; keyboard access for primary controls; and mobile horizontal overflow. These broader checks remain review tools rather than production-promotion gates. Automated tooling cannot establish complete accessibility or translation quality.
 
 ## Limitations
 

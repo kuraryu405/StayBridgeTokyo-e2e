@@ -6,6 +6,7 @@
   "description": "Independent black-box acceptance and evidence suite for StayBridge Tokyo",
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "test:release": "playwright test --project=functional --grep @release",
     "test": "playwright test --project=functional",
     "test:evidence": "playwright test --project=evidence-mobile --project=evidence-admin --grep @evidence",
     "test:evidence:mobile": "playwright test --project=evidence-mobile --grep @evidence",

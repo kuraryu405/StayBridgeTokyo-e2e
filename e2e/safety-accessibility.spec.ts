@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { demoRoadmap, firstQuestionHeading, landingPrimaryCta, loadDemo, openCrisis, openHome, roadmapCard, wardSearchLabel } from "../fixtures/staybridge";
 
-test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nationality-risk claim", async ({ page }) => {
+test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nationality-risk claim @release", async ({ page }) => {
   await openHome(page);
   await expect(page.locator("main")).not.toContainText("あなたは難民です");
   await expect(page.locator("main")).not.toContainText(/難民認定.*確率/);
@@ -15,7 +15,7 @@ test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nat
   await expect(page.locator("main")).not.toContainText("入学できます");
 });
 
-test("SAFE-07 crisis view does not expose individual tracking or address-level location", async ({ page }) => {
+test("SAFE-07 crisis view does not expose individual tracking or address-level location @release", async ({ page }) => {
   await openCrisis(page);
   await expect(page.getByText(/会話本文・個票は含まれません/)).toBeVisible();
   await expect(page.getByText("公開情報と匿名集計を使用", { exact: true })).toBeVisible();
