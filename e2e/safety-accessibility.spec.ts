@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { demoRoadmap, loadDemo, openCrisis, openHome, roadmapCard } from "../fixtures/staybridge";
+import { demoRoadmap, firstQuestionHeading, loadDemo, openCrisis, openHome, roadmapCard, wardSearchLabel } from "../fixtures/staybridge";
 
 test("SAFE-01/02/03/05/06 service makes no unsafe legal, refugee, school, or nationality-risk claim", async ({ page }) => {
   await openHome(page);
@@ -40,9 +40,11 @@ test("keyboard: landing CTA and Situation Check next button work with Enter", as
   await openHome(page);
   await page.getByRole("button", { name: "今の状況を確認する" }).focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { name: "東京のどの地域に滞在していますか？" })).toBeVisible();
-  await page.getByRole("combobox", { name: "東京23区から選択" }).focus();
-  await page.keyboard.type("北区");
+  await expect(page.getByRole("heading", { name: firstQuestionHeading })).toBeVisible();
+  await page.getByRole("combobox", { name: wardSearchLabel }).focus();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: "次へ" })).toBeEnabled();
   await page.getByRole("button", { name: "次へ" }).focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { name: "国籍・地域を教えてください。" })).toBeVisible();
