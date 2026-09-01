@@ -6,7 +6,7 @@ test("AC-01/02 landing is visible and Situation Check starts", async ({ page }) 
   await openHome(page);
   await expect(page.getByRole("heading", { name: /見つけよう。\s*東京での第一歩を。/ })).toBeVisible();
   await page.getByRole("button", { name: "今の状況を確認する" }).click();
-  await expect(page.getByRole("heading", { name: "今、東京のどの地域に滞在していますか？" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "東京のどの地域に滞在していますか？" })).toBeVisible();
 });
 
 test("landing links to the public Preparedness View", async ({ page }) => {
