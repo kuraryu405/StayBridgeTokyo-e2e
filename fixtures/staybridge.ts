@@ -40,8 +40,23 @@ async function chooseCheckbox(page: Page, name: string) {
   await expect(checkbox).toBeChecked();
 }
 
+async function chooseSearchOption(page: Page, label: string, name: string) {
+  const combobox = page.getByRole("combobox", { name: label });
+  await combobox.fill(name);
+  const next = page.getByRole("button", { name: "次へ" });
+  if (!(await next.isEnabled())) {
+    await page.getByRole("option", { name, exact: false }).click();
+  }
+  await expect(next).toBeEnabled();
+}
+
 async function selectOption(page: Page, name: string) {
   await chooseRadio(page, name);
+  await page.getByRole("button", { name: "次へ" }).click();
+}
+
+async function selectSearchOption(page: Page, label: string, name: string) {
+  await chooseSearchOption(page, label, name);
   await page.getByRole("button", { name: "次へ" }).click();
 }
 
@@ -64,9 +79,9 @@ export async function completeSituation(
 ) {
   await openHome(page);
   await page.getByRole("button", { name: "今の状況を確認する" }).click();
-  await expect(page.getByRole("heading", { name: "今、東京のどの地域に滞在していますか？" })).toBeVisible();
-  await selectOption(page, choices.municipality || "北区");
-  await selectOption(page, choices.nationality || "ミャンマー");
+  await expect(page.getByRole("heading", { name: "東京のどの地域に滞在していますか？" })).toBeVisible();
+  await selectSearchOption(page, "東京23区から選択", choices.municipality || "北区");
+  await selectSearchOption(page, "国名・地域名から選択", choices.nationality || "ミャンマー");
   await selectOption(page, choices.purpose || "旅行");
   await selectOption(page, choices.departure || "30日以内");
   await selectOption(page, choices.returnStatus || "帰国することが難しい");
